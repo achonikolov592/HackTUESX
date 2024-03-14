@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8008:3334
+    volumes:
+      - files-to-conv:/app/files
+    networks:
+      - app-conv
+
+volumes:
+  files-to-conv:
+
+networks:
+  app-conv:
