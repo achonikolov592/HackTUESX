@@ -18,11 +18,13 @@ type Resp struct {
 	Body       string `json:"Body"`
 }
 
+var rootFilesPath = "/app/files/"
+
 func ConvFile(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	name := vars["id"]
 
-	res, err := docconv.ConvertPath(name)
+	res, err := docconv.ConvertPath(rootFilesPath + name)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -49,7 +51,7 @@ func ConvNewFile(w http.ResponseWriter, r *http.Request) {
 	ext := strings.Split(nameString, ".")
 
 	name := uuid.NewString()
-	dst, err := os.Create("/app/files/" + name + "." + ext[len(ext)-1])
+	dst, err := os.Create(rootFilesPath + name + "." + ext[len(ext)-1])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -70,7 +72,7 @@ func ConvNewFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := json.Marshal(Resp{name, res.Body})
+	result, err := json.Marshal(Resp{name + "." + ext[len(ext)-1], res.Body})
 
 	w.WriteHeader(http.StatusOK)
 	io.WriteString(w, string(result))
